@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="style.css">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Demo: Audio Stream Animation Library</h1>
+  <canvas id="canvas"></canvas>
+  <audio id="player" onplay="setSource('https://iskatel.hostingradio.ru:8015/iskatel-128.mp3')" controls></audio>
+  <input type="text" oninput="setSource(this.value)" value="https://iskatel.hostingradio.ru:8015/iskatel-128.mp3">
+  <script src="main.js"></script>
+  <script>
+    let audioSource = new AudioSource('player');
+    let canvas = document.getElementById('canvas');
+
+    let setSource = function(src){
+      audioSource.playStream(src);
+      draw(audioSource.streamData, canvas);
+    }
+
+  </script>
+</body>
+
+</html>
