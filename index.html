@@ -16,14 +16,8 @@
   <input type="text" oninput="setSource(this.value)" value="https://iskatel.hostingradio.ru:8015/iskatel-128.mp3">
   <script src="main.js"></script>
   <script>
-    let audioSource = new AudioSource('player');
-    let canvas = document.getElementById('canvas');
-
-    let setSource = function(src){
-      audioSource.playStream(src);
-      draw(audioSource.streamData, canvas);
-    }
-
+    const canvas = document.getElementById('canvas');
+    const setSource = audioSource.bind(this, canvas);
   </script>
 </body>
 

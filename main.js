@@ -1,49 +1,46 @@
-let AudioSource = function() {
+let audioSource = (canvasEl, src) => {
 
-  const player = new Audio();
-  const audioCtx = new AudioContext();
-  const analyser = audioCtx.createAnalyser();
+  const player = new Audio(src);
+  const context = new AudioContext();
+  const analyser = context.createAnalyser();
+  const streamData = new Uint8Array(128);
+
+  let draw = (buffer, canvas) => {
+
+    const ctx = canvas.getContext('2d');
+    const { width, height } = canvas;
+    const barWidth = (width / buffer.length) * 2.5;
+    let barHeight;
+    let x = 0;
+  
+    draw = () => {
+      x = 0;
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, width, height);
+  
+      buffer.forEach((_height) => {
+        barHeight = _height * 0.6;
+        ctx.fillStyle = '#3c90ce';
+        ctx.fillRect(x, height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
+      });
+  
+      requestAnimationFrame(draw);
+    }
+  
+    draw();
+  };
 
   player.crossOrigin = 'anonymous';
-  analyser.fftSize = 256;
+  player.play();
 
-  audioCtx.createMediaElementSource(player).connect(analyser);
-  analyser.connect(audioCtx.destination);
+  analyser.fftSize = 256;
+  context.createMediaElementSource(player).connect(analyser);
+  analyser.connect(context.destination);
 
   setInterval(() => {
-    analyser.getByteFrequencyData(this.streamData);
+    analyser.getByteFrequencyData(streamData);
   }, 20);
 
-  this.volume = 0;
-  this.streamData = new Uint8Array(128);
-  this.playStream = function(streamUrl) {
-    player.src = streamUrl;
-    player.play();
-  }
-};
-
-let draw = function(buffer, canvas) {
-
-  let ctx = canvas.getContext("2d");
-  let { width, height } = canvas;
-  let barWidth = (width / buffer.length) * 2.5;
-  let barHeight;
-  let x = 0;
-
-  draw = function() {
-    x = 0;
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, width, height);
-
-    buffer.forEach((_height) => {
-      barHeight = _height * 0.6;
-      ctx.fillStyle = '#3c90ce';
-      ctx.fillRect(x, height - barHeight, barWidth, barHeight);
-      x += barWidth + 1;
-    });
-
-    requestAnimationFrame(draw);
-  }
-
-  draw();
+  draw(streamData, canvasEl);
 };
